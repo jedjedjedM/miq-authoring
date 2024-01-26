@@ -1,0 +1,43 @@
+{
+  "name": "quiz-authoring-2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^1.0.4",
+    "@spectrum-css/accordion": "^4.0.8",
+    "@spectrum-css/button": "^10.1.14",
+    "@spectrum-css/fieldlabel": "^7.0.22",
+    "@spectrum-css/icon": "^4.0.0",
+    "@spectrum-css/page": "^5.0.33",
+    "@spectrum-css/site": "^3.0.22",
+    "@spectrum-css/textfield": "^6.0.10",
+    "@spectrum-css/typography": "^5.0.31",
+    "@spectrum-css/vars": "^9.0.8",
+    "@spectrum-web-components/accordion": "^0.35.0",
+    "@spectrum-web-components/number-field": "^0.35.0",
+    "@spectrum-web-components/textfield": "^0.35.0",
+    "@spectrum-web-components/top-nav": "^0.40.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.3",
+    "reactflow": "^11.10.1",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "vite": "^4.4.5"
+  }
+}
