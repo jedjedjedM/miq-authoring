@@ -8,7 +8,7 @@ const Sidebar = ({ addQuestion, onImportData, exportData }) => {
     const [baseUrl, setBaseUrl] = useState('');
 
     const handleImportClick = () => {
-        onImportData(baseUrl); // Pass the base URL to the QuizEditor component
+        onImportData(baseUrl);
     };
     return (
         <aside>

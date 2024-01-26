@@ -21,6 +21,8 @@ const getEdgeStyle = (handleId) => {
 const useStore = create((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
+  setResultsData: (newResultsData) => set({ resultsData: newResultsData }),
+
 
   setNodes: (newNodes) => set({ nodes: newNodes }),
   setEdges: (newEdges) => set({ edges: newEdges }),

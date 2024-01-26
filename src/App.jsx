@@ -14,15 +14,12 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import QuizResults from './components/pages/QuizResults';
 import myUseStore from './store/Store';
 import { shallow } from 'zustand/shallow';
 import parseData from './utils/ParseData';
 import '@spectrum-web-components/top-nav/sp-top-nav.js';
 import '@spectrum-web-components/top-nav/sp-top-nav-item.js';
-
-// temporary data for dev testing.
-// import questionsData from '/src/assets/questions.json';
-// import stringsData from '/src/assets/strings.json';
 
 import QuestionNode from './components/nodes/questions/QuestionNode';
 import OptionNode from './components/nodes/options/OptionNode';
@@ -124,7 +121,7 @@ const QuizEditor = () => {
   const [initialView, setInitialView] = useState({ x: 0, y: 0, zoom: 1 });
   const [isZoomedIn, setIsZoomedIn] = useState(false);
 
-  const [baseUrl, setBaseUrl] = useState(''); 
+  const [baseUrl, setBaseUrl] = useState('');
 
   const importData = async (importBaseUrl) => {
     try {
@@ -138,6 +135,7 @@ const QuizEditor = () => {
       setParsedEdges(importedEdges);
       setNodes(layoutedNodes);
       setEdges(importedEdges);
+      myUseStore.getState().setResultsData(resultsData);
 
     } catch (error) {
       console.error('Error importing data:', error);
@@ -173,7 +171,7 @@ const QuizEditor = () => {
   const nodeTypes = useMemo(() => ({
     question: (nodeProps) => <QuestionNode {...nodeProps} setNodes={setNodes} setEdges={setEdges} />,
     option: (nodeProps) => <OptionNode {...nodeProps} setNodes={setNodes} setEdges={setEdges} />,
-  }), [setNodes, setEdges]); 
+  }), [setNodes, setEdges]);
 
   const reactFlowWrapper = useRef(null);
   const connectingNodeId = useRef(null);
@@ -319,59 +317,78 @@ const QuizEditor = () => {
     console.log('Exported Strings Data:', JSON.stringify(stringsData, null, 2));
   };
 
+  const resultsData = myUseStore(state => state.resultsData);
+
   return (
     <div className="wrapper flex" ref={reactFlowWrapper} style={{ height: '100vh' }}>
       <Sidebar
-          addQuestion={addQuestion}
-          onImportData={importData}
-          exportData={exportData}
+        addQuestion={addQuestion}
+        onImportData={importData}
+        exportData={exportData}
       />
       <div className="main-body">
-      <sp-top-nav class="top-nav">
-          <sp-top-nav-item href="#page-1">
-            Visual Authoring
-          </sp-top-nav-item>
-          <sp-top-nav-item href="#page-2">
-            Quiz Results
-          </sp-top-nav-item>
-          <sp-top-nav-item href="#page-2">
-            Debugger
-          </sp-top-nav-item>          
-        </sp-top-nav>
+        <Router>
+          <div className="wrapper flex" style={{ height: '100vh' }}>
+            <div className="main-body">
+              <sp-top-nav class="top-nav">
+                <Link to="/">
+                  <sp-top-nav-item>
+                    Visual Authoring
+                  </sp-top-nav-item>
+                </Link>
+                <Link to="/quiz-results">
+                  <sp-top-nav-item>
+                    Quiz Results
+                  </sp-top-nav-item>
+                </Link>
+                <Link to="/debugger">
+                  <sp-top-nav-item>
+                    Debugger
+                  </sp-top-nav-item>
+                </Link>
+              </sp-top-nav>
 
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          onConnect={onConnect}
-          onConnectStart={onConnectStart}
-          onConnectEnd={onConnectEnd}
-          panOnScroll
-          selectionOnDrag
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          elementsSelectable={true}
-          connectionLineComponent={(props) => <CustomConnectionLine {...props} />}
-          onNodeDoubleClick={handleDoubleClick}
-          zoomOnDoubleClick={false}
-        >
-          <Background color="#aaa" gap={20} />
-          <MiniMap
-            nodeColor={(n) => {
-              if (n.type === "question") return "#ccc";
-              if (n.type === "option") return "pink";
-              if (n.type === "default") return "#ccc";
-              return "#eee";
-            }}
-            nodeBorderRadius={2}
-            pannable={true}
-            zoomable={true}
-          />
-          <Controls />
-        </ReactFlow>
+              <Routes>
+                <Route path="/quiz-results" element={<QuizResults resultsData={resultsData} />} />
+                <Route path="/debugger" element={<div>Debugger Component</div>} />
+                <Route path="/" element={
+                  <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    nodeTypes={nodeTypes}
+                    onConnect={onConnect}
+                    onConnectStart={onConnectStart}
+                    onConnectEnd={onConnectEnd}
+                    panOnScroll
+                    selectionOnDrag
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    elementsSelectable={true}
+                    connectionLineComponent={(props) => <CustomConnectionLine {...props} />}
+                    onNodeDoubleClick={handleDoubleClick}
+                    zoomOnDoubleClick={false}
+                  >
+                    <Background color="#aaa" gap={20} />
+                    <MiniMap
+                      nodeColor={(n) => {
+                        if (n.type === "question") return "#ccc";
+                        if (n.type === "option") return "pink";
+                        if (n.type === "default") return "#ccc";
+                        return "#eee";
+                      }}
+                      nodeBorderRadius={2}
+                      pannable={true}
+                      zoomable={true}
+                    />
+                    <Controls />
+                  </ReactFlow>
+                } />
+              </Routes>
+            </div>
+          </div>
+        </Router>
       </div>
-
-      </div>
+    </div>
   );
 };
 

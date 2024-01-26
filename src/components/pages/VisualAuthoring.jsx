@@ -10,20 +10,14 @@ import parseData from '../../utils/ParseData';
 import QuestionNode from '../nodes/questions/QuestionNode';
 import OptionNode from '../nodes/options/OptionNode';
 import CustomConnectionLine from '../common/CustomConnectionLine';
-// ...other imports
 
 const VisualAuthoringPage = () => {
-  // ... ReactFlow logic and state
 
   return (
     <div ref={reactFlowWrapper} style={{ height: '100vh' }}>
-      <ReactFlow
-        // ... ReactFlow props
-      >
+      <ReactFlow>
         <Background color="#aaa" gap={20} />
-        <MiniMap
-          // ... MiniMap props
-        />
+        <MiniMap />
         <Controls />
       </ReactFlow>
     </div>
