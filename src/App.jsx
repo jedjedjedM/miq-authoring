@@ -41,6 +41,7 @@ import '@spectrum-css/fieldlabel/dist/index.css';
 import '@spectrum-css/textfield/dist/index.css';
 import '@spectrum-css/textfield/dist/index-vars.css';
 import 'reactflow/dist/style.css';
+import Debugger from './components/pages/Debugger';
 
 let id = 1;
 const getId = () => `node${id++}`;
@@ -350,7 +351,7 @@ const QuizEditor = () => {
 
               <Routes>
                 <Route path="/quiz-results" element={<QuizResults resultsData={resultsData} />} />
-                <Route path="/debugger" element={<div>Debugger Component</div>} />
+                <Route path="/debugger" element={<Debugger />} />
                 <Route path="/" element={
                   <ReactFlow
                     nodes={nodes}

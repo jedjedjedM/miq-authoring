@@ -40,6 +40,7 @@ html, body, #root {
   padding: 0;
   box-sizing: border-box;
   font-family: sans-serif;
+  color: white;
 }
 
 
@@ -54,6 +55,16 @@ html, body, #root {
   padding: 0 20px;
 }
 
-h1, h2 {
+h1, h2, p{
   color: white;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  margin: 0 20px;
+}
+
+.spectrum-InLineAlert {
+  margin: 10px;
 }
