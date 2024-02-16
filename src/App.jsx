@@ -35,7 +35,7 @@ import '@spectrum-css/typography/dist/index.css';
 import '@spectrum-css/icon/dist/index.css';
 import '@spectrum-css/button/dist/index.css';
 import '@spectrum-css/accordion/dist/index.css';
-import '@spectrum-css/site/skin.css';
+import '@spectrum-css/site/index.css';
 import '@spectrum-css/fieldlabel/dist/index-vars.css';
 import '@spectrum-css/fieldlabel/dist/index.css';
 import '@spectrum-css/textfield/dist/index.css';
