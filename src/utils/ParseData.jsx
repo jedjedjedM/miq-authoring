@@ -23,6 +23,7 @@ const parseData = (questionsData, stringsData) => {
         const optionsData = questionsData[question.questions];
         optionsData?.data.forEach(option => {
             const optionStringData = stringsData[option.options] || {};
+            const iconUrl = optionStringData.icon || optionStringData['icon-tablet'] || optionStringData['icon-desktop'];
 
             const optionNode = {
                 id: option.options,
@@ -31,11 +32,10 @@ const parseData = (questionsData, stringsData) => {
                     label: optionStringData.title || '',
                     text: optionStringData.text || '',
                     image: optionStringData.image || '',
-                    icon: optionStringData.icon || '',
+                    icon: iconUrl,
                     next: option.next || '',
-                    coverImage: optionStringData.iconDesktop || optionStringData.iconTablet || '',
-                    reset: option.next.includes('RESET'),
-                    result: option.next.includes('RESULT')
+                    reset: option.next?.includes('RESET'),
+                    result: option.next?.includes('RESULT'),
                 },
                 position: { x: 300, y: 300 }
             };
@@ -47,7 +47,6 @@ const parseData = (questionsData, stringsData) => {
                 target: option.options,
                 sourceHandle: 'newOption',
                 targetHandle: null,
-                // className: 'animated',
                 style: { stroke: 'defaultColor' }
             });
 
@@ -61,7 +60,6 @@ const parseData = (questionsData, stringsData) => {
                         target: target,
                         sourceHandle: 'not',
                         targetHandle: 'nextQuestion',
-                        // className: 'animated',
                         style: { stroke: 'defaultColor' }
                     });
                 } else {
@@ -71,7 +69,6 @@ const parseData = (questionsData, stringsData) => {
                         target: nextStep,
                         sourceHandle: 'nextQuestion',
                         targetHandle: 'nextQuestion',
-                        // className: 'animated',
                         style: { stroke: 'defaultColor' }
                     });
                 }

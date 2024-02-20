@@ -42,6 +42,26 @@ const useStore = create((set, get) => ({
     });
   },
 
+  updateNodeData: (nodeId, newData) => {
+    set((state) => {
+      const nodeIndex = state.nodes.findIndex((n) => n.id === nodeId);
+      if (nodeIndex === -1) return;
+  
+      const updatedNodes = state.nodes.map((node, index) => {
+        if (index === nodeIndex) {
+          return {
+            ...node,
+            data: { ...node.data, ...newData },
+          };
+        }
+        return node;
+      });
+  
+      return { nodes: updatedNodes };
+    });
+  },
+  
+
   onEdgesChange: (changes) => {
     set({
       edges: applyEdgeChanges(changes, get().edges),

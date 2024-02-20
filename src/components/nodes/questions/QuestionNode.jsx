@@ -1,21 +1,23 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { memo } from 'react';
-import { Handle, Position, useStore } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 import '@spectrum-web-components/textfield/sp-textfield.js';
 import '@spectrum-web-components/number-field/sp-number-field.js';
 import './QuestionNode.css'
+import zStore from '../../../store/Store.jsx';
+
 
 const QuestionNode = memo(({ id, data, isConnectable }) => {
 
-    const size = useStore((s) => {
-        const node = s.nodeInternals.get(id);
-        return {
-            width: node.width,
-            height: node.height,
-        };
-    });
+    const updateNodeData = zStore((state) => state.updateNodeData);
 
+    const onInputChange = (fieldName) => (event) => {
+        console.log('onInputChange happening');
+        const value = event.target.value;
+        updateNodeData(id, { [fieldName]: value });
+    };
+    
     return (
         <>
             <div className="question">
@@ -26,7 +28,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <sp-field-label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel spectrum-FieldLabel--right" for="node-q-id">Question ID</sp-field-label>
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Textfield">
-                                <sp-textfield id="node-q-id" placeholder="q-photo" value={id}></sp-textfield>
+                                <sp-textfield id="node-q-id" placeholder="q-photo" value={id} onInput={onInputChange('id')}></sp-textfield>
                             </div>
                         </div>
                     </div>
@@ -34,7 +36,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <sp-field-label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel spectrum-FieldLabel--right" for="node-q-title">Title</sp-field-label>
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Textfield">
-                                <sp-textfield id="node-q-title" placeholder="What do you want to do today?" value={data.label}></sp-textfield>
+                                <sp-textfield id="node-q-title" placeholder="What do you want to do today?" value={data.label} onInput={onInputChange('label')}></sp-textfield>
                             </div>
                         </div>
                     </div>
@@ -42,7 +44,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <sp-field-label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel spectrum-FieldLabel--right" for="node-q-subtitle">Subtitle</sp-field-label>
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Textfield">
-                                <sp-textfield id="node-q-subtitle" placeholder="Pick up to 3" value={data.subtitle}></sp-textfield>
+                                <sp-textfield id="node-q-subtitle" placeholder="Pick up to 3" value={data.subtitle} onInput={onInputChange('subtitle')}></sp-textfield>
                             </div>
                         </div>
                     </div>
@@ -51,7 +53,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <sp-field-label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel spectrum-FieldLabel--right" for="node-q-btn">Button Label</sp-field-label>
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Textfield">
-                                <sp-textfield id="node-q-btn" placeholder="Next" value={data.btnLabel}></sp-textfield>
+                                <sp-textfield id="node-q-btn" placeholder="Next" value={data.btnLabel} onInput={onInputChange('btnLabel')}></sp-textfield>
                             </div>
                         </div>
                     </div>
@@ -61,7 +63,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <sp-field-label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel spectrum-FieldLabel--right" for="node-q-imagebg">Background Image URL</sp-field-label>
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Textfield">
-                                <sp-textfield id="node-q-imagebg" placeholder="https://" value={data.backgroundImage}></sp-textfield>
+                                <sp-textfield id="node-q-imagebg" placeholder="https://" value={data.backgroundImage} onInput={onInputChange('backgroundImage')}></sp-textfield>
                             </div>
                         </div>
                     </div>
@@ -71,7 +73,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Stepper">
                                 <div className="spectrum-Textfield spectrum-Stepper-textfield">
-                                    <sp-number-field value={data.maxSelections || "1"} label="Size" size="m" style={{ "--spectrum-stepper-width": "110px" }}></sp-number-field>
+                                    <sp-number-field value={data.minxSelections || "1"} label="Size" size="m" style={{ "--spectrum-stepper-width": "110px" }} onInput={onInputChange('minSelection')}></sp-number-field>
                                 </div>
                             </div>
                         </div>
@@ -82,7 +84,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Stepper">
                                 <div className="spectrum-Textfield spectrum-Stepper-textfield">
-                                    <sp-number-field label="Size" value={data.maxSelections || "3"}  size="m" style={{ "--spectrum-stepper-width": "110px" }}></sp-number-field>
+                                    <sp-number-field label="Size" value={data.maxSelections || "3"}  size="m" style={{ "--spectrum-stepper-width": "110px" }} onInput={onInputChange('maxSelections')}></sp-number-field>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +94,7 @@ const QuestionNode = memo(({ id, data, isConnectable }) => {
                         <sp-field-label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel spectrum-FieldLabel--right" for="node-q-footerFrag">Footer Fragment URL</sp-field-label>
                         <div className="spectrum-Form-itemField">
                             <div className="spectrum-Textfield">
-                                <sp-textfield id="node-q-footerFrag" placeholder="https://" value={data.footerFragment} ></sp-textfield>
+                                <sp-textfield id="node-q-footerFrag" placeholder="https://" value={data.footerFragment} onInput={onInputChange('footerFragment')}></sp-textfield>
                             </div>
                         </div>
                     </div>

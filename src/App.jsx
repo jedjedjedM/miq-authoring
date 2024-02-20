@@ -20,6 +20,8 @@ import { shallow } from 'zustand/shallow';
 import parseData from './utils/ParseData';
 import '@spectrum-web-components/top-nav/sp-top-nav.js';
 import '@spectrum-web-components/top-nav/sp-top-nav-item.js';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 import QuestionNode from './components/nodes/questions/QuestionNode';
 import OptionNode from './components/nodes/options/OptionNode';
@@ -35,7 +37,7 @@ import '@spectrum-css/typography/dist/index.css';
 import '@spectrum-css/icon/dist/index.css';
 import '@spectrum-css/button/dist/index.css';
 import '@spectrum-css/accordion/dist/index.css';
-import '@spectrum-css/site/skin.css';
+import '@spectrum-css/site/index.css';
 import '@spectrum-css/fieldlabel/dist/index-vars.css';
 import '@spectrum-css/fieldlabel/dist/index.css';
 import '@spectrum-css/textfield/dist/index.css';
@@ -155,8 +157,12 @@ const QuizEditor = () => {
 
   const handleDoubleClick = useCallback(
     (event, node) => {
-      if (reactFlowInstance && !isZoomedIn) {
-        setInitialView({ x: reactFlowInstance.viewport.x, y: reactFlowInstance.viewport.y, zoom: reactFlowInstance.viewport.zoom });
+      if (reactFlowInstance && reactFlowInstance.viewport && !isZoomedIn) {
+        setInitialView({
+          x: reactFlowInstance.viewport.x,
+          y: reactFlowInstance.viewport.y,
+          zoom: reactFlowInstance.viewport.zoom
+        });
         const newX = -node.__rf.position.x + window.innerWidth / 2;
         const newY = -node.__rf.position.y + window.innerHeight / 2;
         reactFlowInstance.setViewport({ x: newX, y: newY, zoom: 2 });
@@ -168,7 +174,7 @@ const QuizEditor = () => {
     },
     [isZoomedIn, initialView, reactFlowInstance]
   );
-
+  
   const nodeTypes = useMemo(() => ({
     question: (nodeProps) => <QuestionNode {...nodeProps} setNodes={setNodes} setEdges={setEdges} />,
     option: (nodeProps) => <OptionNode {...nodeProps} setNodes={setNodes} setEdges={setEdges} />,
@@ -257,20 +263,55 @@ const QuizEditor = () => {
     myUseStore.getState().addNode(newNode);
   };
 
+
+  const convertJsonToXlsx = (jsonData, outputFileName) => {
+    const wb = XLSX.utils.book_new();
+  
+    Object.keys(jsonData).forEach(key => {
+      if (!key.startsWith(":") && Array.isArray(jsonData[key].data)) {
+        const ws = XLSX.utils.json_to_sheet(jsonData[key].data);
+        XLSX.utils.book_append_sheet(wb, ws, key);
+      }
+    });
+  
+    const wbout = XLSX.write(wb, {bookType:'xlsx', type:'binary'});
+    const blob = new Blob([s2ab(wbout)], {type: 'application/octet-stream'});
+    saveAs(blob, outputFileName);
+  };
+  
+  const s2ab = (s) => {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  };
+  
   const exportData = () => {
+    const { nodes, edges } = myUseStore.getState();
+  
+    const questionsData = generateQuestionsData(nodes, edges);
+    const stringsData = generateStringsData(nodes, edges);
+  
+    convertJsonToXlsx(questionsData, 'questions.xlsx');
+    convertJsonToXlsx(stringsData, 'strings.xlsx');
+  };
+  
+  const generateQuestionsData = (nodes, edges) => {
+    const questionsSummary = nodes.filter(node => node.type === 'question').map(qNode => ({
+      questions: qNode.id,
+      "max-selections": qNode.data.maxSelections ?? "1",
+      "min-selections": qNode.data.minSelections ?? "1"
+    }));
+  
     const questionsData = {
       questions: {
-        total: nodes.filter(n => n.type === 'question').length,
+        total: questionsSummary.length,
         offset: 0,
-        limit: nodes.filter(n => n.type === 'question').length,
-        data: nodes.filter(n => n.type === 'question').map(qNode => ({
-          questions: qNode.id,
-          "max-selections": qNode.data.maxSelections,
-          "min-selections": qNode.data.minSelections
-        }))
+        limit: questionsSummary.length,
+        data: questionsSummary
       }
     };
-
+  
     nodes.filter(n => n.type === 'question').forEach(qNode => {
       questionsData[qNode.id] = {
         total: edges.filter(e => e.source === qNode.id).length,
@@ -278,11 +319,16 @@ const QuizEditor = () => {
         limit: edges.filter(e => e.source === qNode.id).length,
         data: edges.filter(e => e.source === qNode.id).map(e => ({
           options: e.target,
-          next: nodes.find(n => n.id === e.target).data.next
+          next: nodes.find(n => n.id === e.target)?.data.next || "RESULT",
         }))
       };
     });
+  
+    return questionsData;
 
+  };
+
+  const generateStringsData = (nodes, edges) => {
     const stringsData = {
       questions: {
         total: nodes.filter(n => n.type === 'question').length,
@@ -298,24 +344,26 @@ const QuizEditor = () => {
         }))
       }
     };
-
-    nodes.filter(n => n.type === 'option').forEach(optionNode => {
-      stringsData[optionNode.id] = {
-        total: 1,
+  
+    nodes.filter(n => n.type === 'question').forEach(qNode => {
+      stringsData[qNode.id] = {
+        total: edges.filter(e => e.source === qNode.id).length,
         offset: 0,
-        limit: 1,
-        data: [{
-          options: optionNode.id,
-          title: optionNode.data.label,
-          text: optionNode.data.text,
-          icon: optionNode.data.icon,
-          image: optionNode.data.image
-        }]
+        limit: edges.filter(e => e.source === qNode.id).length,
+        data: edges.filter(e => e.source === qNode.id).map(edge => {
+          const targetNode = nodes.find(n => n.id === edge.target);
+          return {
+            options: edge.target,
+            title: targetNode.data.label,
+            text: targetNode.data.text,
+            icon: targetNode.data.icon,
+            image: targetNode.data.image
+          };
+        })
       };
     });
-
-    console.log('Exported Questions Data:', JSON.stringify(questionsData, null, 2));
-    console.log('Exported Strings Data:', JSON.stringify(stringsData, null, 2));
+  
+    return stringsData;
   };
 
   const resultsData = myUseStore(state => state.resultsData);
