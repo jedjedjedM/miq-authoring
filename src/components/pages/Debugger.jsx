@@ -1,4 +1,5 @@
-import React from 'react';
+import { useState } from 'react';
+import UrlsChecker from './UrlsChecker';
 import '@spectrum-web-components/textfield/sp-textfield.js';
 import '@spectrum-web-components/accordion/sp-accordion.js';
 import '@spectrum-web-components/accordion/sp-accordion-item.js';
@@ -6,128 +7,41 @@ import '@spectrum-css/table';
 import '@spectrum-css/inlinealert';
 
 const Debugger = () => {
+  const [selectedWebsite, setSelectedWebsite] = useState('https://main--milo--adobecom.hlx.live/drafts/quiz/quiz-2/');
+
+  const handleSelectChange = (event) => {
+    if (event.target.value === 'custom') {
+      const customWebsite = prompt('Enter the website URL');
+      console.log('customWebsite:', customWebsite);
+      setSelectedWebsite(customWebsite);
+    } else {
+      setSelectedWebsite(event.target.value);
+    }
+  };
+
   return (
     <div className='container'>
       <h1>Quiz Info &amp; Debugging</h1>
-        <div><b>URL:</b> http://main--milo.adobecom.hlx.page/.../quiz.html</div>
-        <div><b>Title:</b> UAR Quiz</div>
-        <div><b>Author:</b> UAR Team</div>
-        <div><b>Created:</b> 2021-05-31T23:00:00Z</div>
-        <div><b>Updated:</b> 2021-05-31T23:00:00Z</div>
-        <div><b>Status:</b> Published</div>
+      <label htmlFor="websites">Selection a website:</label>
+
+      <select name="websites" id="websites" defaultValue="https://main--milo--adobecom.hlx.live/drafts/quiz/quiz-2/" onChange={handleSelectChange}>
+        <option value="https://main--milo--adobecom.hlx.live/drafts/quiz/quiz-2/">https://main--milo--adobecom.hlx.live/drafts/quiz/quiz-2/</option>
+        <option value="https://www.adobe.com/creativecloud/plan-recommender/">https://www.adobe.com/creativecloud/plan-recommender/quiz</option>
+        <option value="https://main--cc--adobecom.hlx.live/creativecloud/plan-recommender/">https://main--cc--adobecom.hlx.live/creativecloud/plan-recommender/quiz</option>
+        <option value="https://main--cc--adobecom.hlx.live/products/photoshop/plan-recommender/">https://main--cc--adobecom.hlx.live/products/photoshop/plan-recommender/quiz</option>
+        <option value="https://www.stage.adobe.com/products/photoshop/plan-recommender/">https://www.stage.adobe.com/products/photoshop/plan-recommender/quiz</option>
+        <option value="custom">Add custom website...</option>
+      </select>
+      <div><b>Title:</b> UAR Quiz</div>
+      <div><b>Author:</b> UAR Team</div>
+      <div><b>Created:</b> 2021-05-31T23:00:00Z</div>
+      <div><b>Updated:</b> 2021-05-31T23:00:00Z</div>
+      <div><b>Status:</b> Published</div>
 
 
       <h2>404 Checker</h2>
-      <sp-accordion>
-        <sp-accordion-item label="Results">
-          <div className="spectrum-Table-scroller spectrum-Table spectrum-Table--sizeM spectrum-Table--emphasized spectrum-Table--quiet" style={{ width: '100%' }}>
-            <div className="spectrum-Table-main" role="table" style={{ width: '100%' }}>
-              <div className="spectrum-Table-head" role="rowgroup">
-                <div role="row">
-                  <div className="spectrum-Table-headCell is-sortable is-sorted-desc" role="columnheader" aria-sort="descending" tabIndex="0">
-                    <svg className="spectrum-Icon spectrum-UIIcon-ArrowDown100 spectrum-Table-sortedIcon" focusable="false" aria-hidden="true">
-                      <use xlinkHref="#spectrum-css-icon-Arrow100" />
-                    </svg><span className="spectrum-Table-columnTitle">URL</span>
-                  </div>
-                  <div className="spectrum-Table-headCell is-sortable" role="columnheader" aria-sort="none" tabIndex="0">
-                    <svg className="spectrum-Icon spectrum-UIIcon-ArrowDown100 spectrum-Table-sortedIcon" focusable="false" aria-hidden="true">
-                      <use xlinkHref="#spectrum-css-icon-Arrow100" />
-                    </svg><span className="spectrum-Table-columnTitle">URL Status</span>
-                  </div>
-                  <div className="spectrum-Table-headCell" role="columnheader">Last Previewed</div>
-                  <div className="spectrum-Table-headCell" role="columnheader">Last Published</div>
-                </div>
-              </div>
-              <div className="spectrum-Table-body" role="rowgroup">
-                <div className="spectrum-Table-row" role="row">
-                  <div className="spectrum-Table-cell" role="cell">https://main--milo--adobecom.hlx.page/fragments/ccx</div>
-                  <div className="spectrum-Table-cell" role="cell">200</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                </div>
-                <div className="spectrum-Table-row" role="row">
-                  <div className="spectrum-Table-cell" role="cell">https://main--milo--adobecom.hlx.page/fragments/ccx</div>
-                  <div className="spectrum-Table-cell" role="cell">200</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </sp-accordion-item>
-        <sp-accordion-item label="Result Fragments">
-          <div className="spectrum-Table-scroller spectrum-Table spectrum-Table--sizeM spectrum-Table--emphasized spectrum-Table--quiet" style={{ width: '100%' }}>
-            <div className="spectrum-Table-main" role="table" style={{ width: '100%' }}>
-              <div className="spectrum-Table-head" role="rowgroup">
-                <div role="row">
-                  <div className="spectrum-Table-headCell is-sortable is-sorted-desc" role="columnheader" aria-sort="descending" tabIndex="0">
-                    <svg className="spectrum-Icon spectrum-UIIcon-ArrowDown100 spectrum-Table-sortedIcon" focusable="false" aria-hidden="true">
-                      <use xlinkHref="#spectrum-css-icon-Arrow100" />
-                    </svg><span className="spectrum-Table-columnTitle">URL</span>
-                  </div>
-                  <div className="spectrum-Table-headCell is-sortable" role="columnheader" aria-sort="none" tabIndex="0">
-                    <svg className="spectrum-Icon spectrum-UIIcon-ArrowDown100 spectrum-Table-sortedIcon" focusable="false" aria-hidden="true">
-                      <use xlinkHref="#spectrum-css-icon-Arrow100" />
-                    </svg><span className="spectrum-Table-columnTitle">URL Status</span>
-                  </div>
-                  <div className="spectrum-Table-headCell" role="columnheader">Last Previewed</div>
-                  <div className="spectrum-Table-headCell" role="columnheader">Last Published</div>
-                </div>
-              </div>
-              <div className="spectrum-Table-body" role="rowgroup">
-                <div className="spectrum-Table-row" role="row">
-                  <div className="spectrum-Table-cell" role="cell">https://main--milo--adobecom.hlx.page/fragments/ccx</div>
-                  <div className="spectrum-Table-cell" role="cell">200</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                </div>
-                <div className="spectrum-Table-row" role="row">
-                  <div className="spectrum-Table-cell" role="cell">https://main--milo--adobecom.hlx.page/fragments/ccx</div>
-                  <div className="spectrum-Table-cell" role="cell">200</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </sp-accordion-item>
-        <sp-accordion-item label="Result Destination">
-          <div className="spectrum-Table-scroller spectrum-Table spectrum-Table--sizeM spectrum-Table--emphasized spectrum-Table--quiet" style={{ width: '100%' }}>
-            <div className="spectrum-Table-main" role="table" style={{ width: '100%' }}>
-              <div className="spectrum-Table-head" role="rowgroup">
-                <div role="row">
-                  <div className="spectrum-Table-headCell is-sortable is-sorted-desc" role="columnheader" aria-sort="descending" tabIndex="0">
-                    <svg className="spectrum-Icon spectrum-UIIcon-ArrowDown100 spectrum-Table-sortedIcon" focusable="false" aria-hidden="true">
-                      <use xlinkHref="#spectrum-css-icon-Arrow100" />
-                    </svg><span className="spectrum-Table-columnTitle">URL</span>
-                  </div>
-                  <div className="spectrum-Table-headCell is-sortable" role="columnheader" aria-sort="none" tabIndex="0">
-                    <svg className="spectrum-Icon spectrum-UIIcon-ArrowDown100 spectrum-Table-sortedIcon" focusable="false" aria-hidden="true">
-                      <use xlinkHref="#spectrum-css-icon-Arrow100" />
-                    </svg><span className="spectrum-Table-columnTitle">URL Status</span>
-                  </div>
-                  <div className="spectrum-Table-headCell" role="columnheader">Last Previewed</div>
-                  <div className="spectrum-Table-headCell" role="columnheader">Last Published</div>
-                </div>
-              </div>
-              <div className="spectrum-Table-body" role="rowgroup">
-                <div className="spectrum-Table-row" role="row">
-                  <div className="spectrum-Table-cell" role="cell">https://main--milo--adobecom.hlx.page/fragments/ccx</div>
-                  <div className="spectrum-Table-cell" role="cell">200</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                </div>
-                <div className="spectrum-Table-row" role="row">
-                  <div className="spectrum-Table-cell" role="cell">https://main--milo--adobecom.hlx.page/fragments/ccx</div>
-                  <div className="spectrum-Table-cell" role="cell">200</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                  <div className="spectrum-Table-cell" role="cell">2021-05-31T23:00:00Z</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </sp-accordion-item>
-      </sp-accordion>
+
+      {UrlsChecker(selectedWebsite)}
 
       <h2>Quiz Validation</h2>
 
