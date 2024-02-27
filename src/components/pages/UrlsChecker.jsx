@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchResultsJson, handleResults } from '../../utils/utils';
 
-const UrlsChecker = (resultsPath) => {
+const UrlsChecker = ({ resultsPath }) => {
   const [urlData, setUrlData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [destinationUrlData, setDestinationUrlData] = useState([]);

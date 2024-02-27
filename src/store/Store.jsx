@@ -22,6 +22,7 @@ const useStore = create((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
   setResultsData: (newResultsData) => set({ resultsData: newResultsData }),
+  setBaseUrl: (newBaseUrl) => set({ baseUrl: newBaseUrl }),
 
 
   setNodes: (newNodes) => set({ nodes: newNodes }),
