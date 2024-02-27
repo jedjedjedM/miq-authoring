@@ -44,6 +44,7 @@ import '@spectrum-css/textfield/dist/index.css';
 import '@spectrum-css/textfield/dist/index-vars.css';
 import 'reactflow/dist/style.css';
 import Debugger from './components/pages/Debugger';
+import { validateDuplicates, validateQuestionIds } from './utils/utils';
 
 let id = 1;
 const getId = () => `node${id++}`;
@@ -126,11 +127,30 @@ const QuizEditor = () => {
 
   const [baseUrl, setBaseUrl] = useState('');
 
+
+  const performValidations = (strings, questions) => {
+
+    const validations = [
+      // validateQuestionIds(strings, questions),
+      validateDuplicates([...strings.questions.data, ...questions.questions.data], 'questions'),
+    ];
+    myUseStore.getState().setValidationResults(validations);
+
+    console.log('validations:', validations);
+    console.log('strings:', strings);
+    console.log('questions:', questions);
+    console.log('hello world brad');  
+  };
+
   const importData = async (importBaseUrl) => {
     try {
       const questionsData = await fetchFile(importBaseUrl, 'questions.json');
       const stringsData = await fetchFile(importBaseUrl, 'strings.json');
       const resultsData = await fetchFile(importBaseUrl, 'results.json');
+      console.log('Things seemed to import?'); 
+      console.log('resultsData:', resultsData); 
+      console.log('stringsData:', stringsData);
+      console.log('questionsData:', questionsData);
       const { nodes: importedNodes, edges: importedEdges } = parseData(questionsData, stringsData);
       const layoutedNodes = layoutGraph(importedNodes, importedEdges);
 
@@ -138,7 +158,11 @@ const QuizEditor = () => {
       setParsedEdges(importedEdges);
       setNodes(layoutedNodes);
       setEdges(importedEdges);
-      myUseStore.getState().setResultsData(resultsData);
+      myUseStore.getState().setData(stringsData, questionsData, resultsData);
+      // myUseStore.getState().setQuestionsData(questionsData);
+      // myUseStore.getState().setStringsData(stringsData);  
+
+      performValidations(stringsData, questionsData);
 
     } catch (error) {
       console.error('Error importing data:', error);

@@ -148,3 +148,55 @@ export async function handleResults(results, sheetName, resultsPath) {
     return statusResults.sort((a, b) => b.status - a.status);
   }
 }
+
+// validate that the question IDs in questions.json and strings.json match up
+export function validateQuestionIds(questions, stringData) {
+  const questionIds = questions.questions.map(question => question.id);
+  const stringIds = Object.keys(stringData);
+  
+  const unmatchedQuestionIDs = questionIds.filter(id => !stringIds.includes(id));
+  const unmatchedStringIDs = stringIds.filter(id => !questionIds.includes(id));
+
+  if (unmatchedQuestionIDs.length === 0 && unmatchedStringIDs.length === 0) {
+   return {
+      status: 'valid',
+      heading: 'Question IDs',
+      body: 'All question IDs in questions.json and strings.json match up.', 
+    }
+   } else {
+    return {
+      status: 'invalid',
+      heading: 'Question IDs',
+      body: `The following question IDs in questions.json do not have a corresponding ID in strings.json: ${unmatchedQuestionIDs.join(', ')}. The following IDs in strings.json do not have a corresponding question ID in questions.json: ${unmatchedStringIDs.join(', ')}.`,
+    }
+   }
+}
+
+// Checks for duplicate IDs within the data (used for both questions and strings)
+export function validateDuplicates(data, dataType) {
+  const ids = data.map(item => item[dataType === 'questions' ? 'questions' : 'q']);
+  const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+  console.log('duplicates');
+  console.log(duplicates);
+
+  console.log('data');
+  console.log(data);
+
+  console.log('dataType');
+  console.log(dataType);
+
+
+  if (duplicates.length === 0) {
+    return {
+      status: 'valid',
+      heading: 'Duplicate Questions',
+      body: 'No Duplicates found!',
+    }
+  } else {
+    return {
+      status: 'invalid',
+      heading: 'Duplicate Questions',
+      body: `The following IDs are duplicated:. Please ensure all IDs are unique.`,
+    }
+  }
+}

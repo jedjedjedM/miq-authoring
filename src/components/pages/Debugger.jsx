@@ -5,9 +5,11 @@ import '@spectrum-web-components/accordion/sp-accordion.js';
 import '@spectrum-web-components/accordion/sp-accordion-item.js';
 import '@spectrum-css/table';
 import '@spectrum-css/inlinealert';
+import zStore from '../../store/Store';
 
 const Debugger = () => {
   const [selectedWebsite, setSelectedWebsite] = useState('https://main--milo--adobecom.hlx.live/drafts/quiz/quiz-2/');
+  const validationResults = zStore((state) => state.validationResults);
 
   const handleSelectChange = (event) => {
     if (event.target.value === 'custom') {
@@ -44,69 +46,20 @@ const Debugger = () => {
       {UrlsChecker(selectedWebsite)}
 
       <h2>Quiz Validation</h2>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Question IDs
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">All question IDs in questions.json and strings.json match up.</div>
-      </div>
-
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Duplicate Questions
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">No Duplicates found!</div>
-      </div>
-
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Duplicate Questions
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">No Duplicates found!</div>
-      </div>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Required Structure
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-Info" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">Minimum columns needed, etc</div>
-      </div>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--negative">
-        <div className="spectrum-InLineAlert-header">
-          No Connections
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">The following questions have no IDs in strings.json: q-rather, q-photo. Please ensure connections match!.</div>
-      </div>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Positive in-line alert header
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">This is an alert.</div>
-      </div>
-
+      {console.log('validationResults')}
+      {console.log(validationResults)}
+        {validationResults.map((validation, index) => (
+          <div key={index} className={`spectrum-InLineAlert spectrum-InLineAlert--${validation.type}`}>
+            <div className="spectrum-InLineAlert-header">
+              {validation.title}
+              <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
+                <use xlinkHref={`#spectrum-icon-18-${validation.icon}`} />
+              </svg>
+            </div>
+            <div className="spectrum-InLineAlert-content">{validation.message}</div>
+          </div>
+        ))}
+      <hr />
       <h2>Results Validation</h2>
       <div className="spectrum-InLineAlert">
         <div className="spectrum-InLineAlert-header">
