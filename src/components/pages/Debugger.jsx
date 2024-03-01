@@ -46,19 +46,15 @@ const Debugger = () => {
       {UrlsChecker(selectedWebsite)}
 
       <h2>Quiz Validation</h2>
-      {console.log('validationResults')}
-      {console.log(validationResults)}
-        {validationResults.map((validation, index) => (
-          <div key={index} className={`spectrum-InLineAlert spectrum-InLineAlert--${validation.type}`}>
-            <div className="spectrum-InLineAlert-header">
-              {validation.title}
-              <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-                <use xlinkHref={`#spectrum-icon-18-${validation.icon}`} />
-              </svg>
-            </div>
-            <div className="spectrum-InLineAlert-content">{validation.message}</div>
+      {validationResults.map((validation, index) => (
+        <div key={index} className={`spectrum-InLineAlert spectrum-InLineAlert--${validation.severity}`}>
+          <div className="spectrum-InLineAlert-header">
+            {validation.heading}
           </div>
-        ))}
+          <div className="spectrum-InLineAlert-content">{validation.body}</div>
+        </div>
+      ))}
+      
       <hr />
       <h2>Results Validation</h2>
       <div className="spectrum-InLineAlert">

@@ -148,55 +148,80 @@ export async function handleResults(results, sheetName, resultsPath) {
     return statusResults.sort((a, b) => b.status - a.status);
   }
 }
+// Helper functions to extract IDs from both JSON structures
+const extractQuestionIdsFromQuestions = (data) => data.questions.data.map(item => item.questions);
+const extractQuestionIdsFromStrings = (data) => data.questions.data.map(item => item.q);
 
-// validate that the question IDs in questions.json and strings.json match up
-export function validateQuestionIds(questions, stringData) {
-  const questionIds = questions.questions.map(question => question.id);
-  const stringIds = Object.keys(stringData);
-  
-  const unmatchedQuestionIDs = questionIds.filter(id => !stringIds.includes(id));
-  const unmatchedStringIDs = stringIds.filter(id => !questionIds.includes(id));
+const createValidationResult = (isValid, heading, body, source) => {
+  return {
+    status: isValid ? 'valid' : 'invalid',
+    severity: isValid ? 'positive' : 'negative',
+    heading: heading + (source === 'questions' ? ' (Questions)' : ' (Strings)'),
+    body: body,
+  };
+};
 
-  if (unmatchedQuestionIDs.length === 0 && unmatchedStringIDs.length === 0) {
-   return {
-      status: 'valid',
-      heading: 'Question IDs',
-      body: 'All question IDs in questions.json and strings.json match up.', 
-    }
-   } else {
-    return {
-      status: 'invalid',
-      heading: 'Question IDs',
-      body: `The following question IDs in questions.json do not have a corresponding ID in strings.json: ${unmatchedQuestionIDs.join(', ')}. The following IDs in strings.json do not have a corresponding question ID in questions.json: ${unmatchedStringIDs.join(', ')}.`,
-    }
-   }
-}
-
-// Checks for duplicate IDs within the data (used for both questions and strings)
-export function validateDuplicates(data, dataType) {
-  const ids = data.map(item => item[dataType === 'questions' ? 'questions' : 'q']);
+const validateUniqueQuestionIds = (data, extractIdsFunc, source) => {
+  const ids = extractIdsFunc(data);
   const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
-  console.log('duplicates');
-  console.log(duplicates);
+  const isValid = duplicates.length === 0;
+  const body = isValid ? 'All question IDs are unique.' : `Duplicate IDs found: ${duplicates.join(', ')}.`;
+  return createValidationResult(isValid, 'Unique Question IDs', body, source);
+};
 
-  console.log('data');
-  console.log(data);
+const validateSelections = (data) => {
+  const issues = data.questions.data.filter(q => {
+    const min = parseInt(q['min-selections'], 10);
+    const max = parseInt(q['max-selections'], 10);
+    return isNaN(min) || isNaN(max) || min > max || max < min;
+  });
+  const isValid = issues.length === 0;
+  const body = isValid ? 'Min/max selections are valid.' : 'Issues with min/max selections.';
+  return createValidationResult(isValid, 'Selections Validation', body, 'questions');
+};
 
-  console.log('dataType');
-  console.log(dataType);
+const validateNamesArray = (data, expectedNames, source) => {
+  const namesFromData = data[':names'].slice(1); // Skip "questions" entry
+  const missingNames = expectedNames.filter(name => !namesFromData.includes(name));
+  const unexpectedNames = namesFromData.filter(name => !expectedNames.includes(name));
+  const isValid = missingNames.length === 0 && unexpectedNames.length === 0;
+  const body = isValid ? 'The :names array accurately reflects the expected question IDs.'
+                       : `Missing expected names: ${missingNames.join(', ')}. Unexpected names found: ${unexpectedNames.join(', ')}.`;
+  return createValidationResult(isValid, 'Names Array Integrity', body, source);
+};
 
 
-  if (duplicates.length === 0) {
-    return {
-      status: 'valid',
-      heading: 'Duplicate Questions',
-      body: 'No Duplicates found!',
-    }
-  } else {
-    return {
-      status: 'invalid',
-      heading: 'Duplicate Questions',
-      body: `The following IDs are duplicated:. Please ensure all IDs are unique.`,
-    }
-  }
-}
+const validateEndFlow = (questionsData) => {
+  // Find the last question based on the 'next' attribute pointing to 'RESULT'
+  const lastQuestionKey = Object.keys(questionsData).find(key => {
+    return questionsData[key].data && questionsData[key].data.every(option => option.next === 'RESULT');
+  });
+
+  const isEndFlowValid = Boolean(lastQuestionKey); // true if lastQuestionKey is found, false otherwise
+  const body = isEndFlowValid
+    ? `All paths in '${lastQuestionKey}' correctly end with RESULT leading to the results page.`
+    : 'No question has all paths ending with RESULT, indicating the quiz may not have a proper end.';
+
+  return createValidationResult(isEndFlowValid, 'End Flow Check', body, 'questions');
+};
+
+export const performValidations = (questionsData, stringsData) => {
+  const questionsIds = extractQuestionIdsFromQuestions(questionsData);
+  const stringsIds = extractQuestionIdsFromStrings(stringsData);
+
+  const validations = [
+    validateUniqueQuestionIds(questionsData, extractQuestionIdsFromQuestions, 'questions'),
+    validateUniqueQuestionIds(stringsData, extractQuestionIdsFromStrings, 'strings'),
+    validateSelections(questionsData),
+    validateNamesArray(stringsData, questionsIds, 'strings'),
+    validateNamesArray(questionsData, questionsIds, 'questions'),
+    validateEndFlow(questionsData),
+  ];
+
+  // Augment validations with the source information
+  validations.forEach(validation => {
+    validation.source = validation.heading.includes('(Questions)') ? 'questions' : 'strings';
+  });
+
+  return validations;
+};
