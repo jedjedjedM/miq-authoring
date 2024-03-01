@@ -143,7 +143,9 @@ const QuizEditor = () => {
       setParsedEdges(importedEdges);
       setNodes(layoutedNodes);
       setEdges(importedEdges);
-  
+
+      myUseStore.getState().setResultsData(resultsData);
+      myUseStore.getState().setBaseUrl(importBaseUrl);
 
     } catch (error) {
       console.error('Error importing data:', error);
