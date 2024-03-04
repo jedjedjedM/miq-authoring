@@ -26,7 +26,6 @@ const zStore = create((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
 
-  setResultsData: (newResultsData) => set({ resultsData: newResultsData }),
   setBaseUrl: (newBaseUrl) => set({ baseUrl: newBaseUrl }),
 
   setData: ({ stringsData, questionsData, newResultsData }) => set(() => ({ stringsData, questionsData, newResultsData })),

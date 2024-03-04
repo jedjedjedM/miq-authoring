@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import UrlsChecker from './UrlsChecker';
 import '@spectrum-web-components/textfield/sp-textfield.js';
 import '@spectrum-web-components/accordion/sp-accordion.js';
@@ -7,10 +6,9 @@ import '@spectrum-css/table';
 import '@spectrum-css/inlinealert';
 import zStore from '../../store/Store';
 
-const validationResults = zStore((state) => state.validationResults);
-
 const Debugger = () => {
-  const [selectedWebsite, setSelectedWebsite] = useState(zStore(state => state.baseUrl));
+  const validationResults = zStore((state) => state.validationResults);
+  const selectedWebsite = zStore((state) => state.baseUrl);
 
   const isOptionExisting = (selector, text, value) => {
     const selectElement = document.querySelector(selector);
