@@ -1,14 +1,14 @@
-import { useState } from 'react';
 import UrlsChecker from './UrlsChecker';
 import '@spectrum-web-components/textfield/sp-textfield.js';
 import '@spectrum-web-components/accordion/sp-accordion.js';
 import '@spectrum-web-components/accordion/sp-accordion-item.js';
 import '@spectrum-css/table';
 import '@spectrum-css/inlinealert';
-import myUseStore from '../../store/Store';
+import zStore from '../../store/Store';
 
 const Debugger = () => {
-  const [selectedWebsite, setSelectedWebsite] = useState(myUseStore(state => state.baseUrl));
+  const validationResults = zStore((state) => state.validationResults);
+  const selectedWebsite = zStore((state) => state.baseUrl);
 
   const isOptionExisting = (selector, text, value) => {
     const selectElement = document.querySelector(selector);
@@ -21,12 +21,12 @@ const Debugger = () => {
         }
       });
     }
-
+    
     return optionExists;
   };
 
   const updateSelectElement = () => {
-    const baseUrl = myUseStore(state => state.baseUrl);
+    const baseUrl = zStore(state => state.baseUrl);
     const selectElement = document.querySelector('#websites');
 
     if (baseUrl) {
@@ -83,69 +83,16 @@ const Debugger = () => {
       <UrlsChecker resultsPath={selectedWebsite}></UrlsChecker>
 
       <h2>Quiz Validation</h2>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Question IDs
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
+      {validationResults.map((validation, index) => (
+        <div key={index} className={`spectrum-InLineAlert spectrum-InLineAlert--${validation.severity}`}>
+          <div className="spectrum-InLineAlert-header">
+            {validation.heading}
+          </div>
+          <div className="spectrum-InLineAlert-content">{validation.body}</div>
         </div>
-        <div className="spectrum-InLineAlert-content">All question IDs in questions.json and strings.json match up.</div>
-      </div>
-
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Duplicate Questions
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">No Duplicates found!</div>
-      </div>
-
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Duplicate Questions
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">No Duplicates found!</div>
-      </div>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Required Structure
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-Info" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">Minimum columns needed, etc</div>
-      </div>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--negative">
-        <div className="spectrum-InLineAlert-header">
-          No Connections
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">The following questions have no IDs in strings.json: q-rather, q-photo. Please ensure connections match!.</div>
-      </div>
-
-      <div className="spectrum-InLineAlert spectrum-InLineAlert--positive">
-        <div className="spectrum-InLineAlert-header">
-          Positive in-line alert header
-          <svg className="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false" aria-hidden="true">
-            <use xlinkHref="#spectrum-icon-18-CheckmarkCircle" />
-          </svg>
-        </div>
-        <div className="spectrum-InLineAlert-content">This is an alert.</div>
-      </div>
-
+      ))}
+      
+      <hr />
       <h2>Results Validation</h2>
       <div className="spectrum-InLineAlert">
         <div className="spectrum-InLineAlert-header">

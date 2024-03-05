@@ -44,6 +44,7 @@ import '@spectrum-css/textfield/dist/index.css';
 import '@spectrum-css/textfield/dist/index-vars.css';
 import 'reactflow/dist/style.css';
 import Debugger from './components/pages/Debugger';
+import { performValidations } from './utils/utils';
 
 let id = 1;
 const getId = () => `node${id++}`;
@@ -131,13 +132,18 @@ const QuizEditor = () => {
       const questionsData = await fetchFile(importBaseUrl, 'questions.json');
       const stringsData = await fetchFile(importBaseUrl, 'strings.json');
       const resultsData = await fetchFile(importBaseUrl, 'results.json');
+      myUseStore.getState().setData(stringsData, questionsData, resultsData);
+      const validationResults = performValidations(questionsData, stringsData);
+      myUseStore.getState().setValidationResults(validationResults);
+      
       const { nodes: importedNodes, edges: importedEdges } = parseData(questionsData, stringsData);
       const layoutedNodes = layoutGraph(importedNodes, importedEdges);
-
+  
       setParsedNodes(layoutedNodes);
       setParsedEdges(importedEdges);
       setNodes(layoutedNodes);
       setEdges(importedEdges);
+
       myUseStore.getState().setResultsData(resultsData);
       myUseStore.getState().setBaseUrl(importBaseUrl);
 

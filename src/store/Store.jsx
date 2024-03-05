@@ -3,6 +3,10 @@ import { addEdge, applyEdgeChanges, applyNodeChanges } from 'reactflow';
 
 const initialNodes = [];
 const initialEdges = [];
+const initialValidationResults = [];
+const stringsData = [];
+const questionsData = [];
+const resultsData = [];
 
 const getEdgeStyle = (handleId) => {
   switch (handleId) {
@@ -18,13 +22,16 @@ const getEdgeStyle = (handleId) => {
       return { stroke: 'white', labelText: '' };
   }
 };
-const useStore = create((set, get) => ({
+const zStore = create((set, get) => ({
   nodes: initialNodes,
   edges: initialEdges,
-  setResultsData: (newResultsData) => set({ resultsData: newResultsData }),
+
   setBaseUrl: (newBaseUrl) => set({ baseUrl: newBaseUrl }),
 
-
+  setData: ({ stringsData, questionsData, newResultsData }) => set(() => ({ stringsData, questionsData, newResultsData })),
+  setResultsData: (newResultsData) => set(() => ({ resultsData: newResultsData })),
+  setValidationResults: (newValidationResults) => set(() => ({ validationResults: newValidationResults })), 
+  
   setNodes: (newNodes) => set({ nodes: newNodes }),
   setEdges: (newEdges) => set({ edges: newEdges }),
 
@@ -83,6 +90,9 @@ const useStore = create((set, get) => ({
       edges: addEdge(newEdge, state.edges),
     }));
   },
+
+  validationResults: initialValidationResults,
+  // setValidationResults: (results) => set({ validationResults: results }),
 }));
 
-export default useStore;
+export default zStore;
