@@ -181,7 +181,7 @@ const validateSelections = (data) => {
 };
 
 const validateNamesArray = (data, expectedNames, source) => {
-  const namesFromData = data[':names'].slice(1); // Skip "questions" entry
+  const namesFromData = data[':names'].filter(name => name !== 'questions').sort();
   const missingNames = expectedNames.filter(name => !namesFromData.includes(name));
   const unexpectedNames = namesFromData.filter(name => !expectedNames.includes(name));
   const isValid = missingNames.length === 0 && unexpectedNames.length === 0;
