@@ -111,39 +111,39 @@ export async function handleResults(results, sheetName, resultsPath) {
     //   }
     // }
 
-    // If the resultsPath includes 'www.adobe.com', fetch the headers for the URLs
-    const statusResults2 = [];
-    for (const url of uniqueUrls) {
-      const result = {};
-      const result1 = await fetchHeaders(url);
-      if (sheetName !== 'result-destination' && (resultsPath.includes('www.adobe.com') || resultsPath.includes('www.stage.adobe.com'))) {
-        let urlLive = '';
-        if (resultsPath.includes('www.adobe.com')) {
-          urlLive = url.replace('www.adobe.com', 'main--cc--adobecom.hlx.live');
-        } else {
-          urlLive = url.replace('www.stage.adobe.com', 'main--cc--adobecom.hlx.live');
-        }
-        const result2 = await fetchHeaders(urlLive);
-        if (result1 && result2) {
-          result['url'] = url;
-          result['status'] = (result1.status === 200 && result2.status === 200) ? 200 : 404;
-          result['last-modified'] = result1['last-modified'];
+    // // If the resultsPath includes 'www.adobe.com', fetch the headers for the URLs
+    // const statusResults2 = [];
+    // for (const url of uniqueUrls) {
+    //   const result = {};
+    //   const result1 = await fetchHeaders(url);
+    //   if (sheetName !== 'result-destination' && (resultsPath.includes('www.adobe.com') || resultsPath.includes('www.stage.adobe.com'))) {
+    //     let urlLive = '';
+    //     if (resultsPath.includes('www.adobe.com')) {
+    //       urlLive = url.replace('www.adobe.com', 'main--cc--adobecom.hlx.live');
+    //     } else {
+    //       urlLive = url.replace('www.stage.adobe.com', 'main--cc--adobecom.hlx.live');
+    //     }
+    //     const result2 = await fetchHeaders(urlLive);
+    //     if (result1 && result2) {
+    //       result['url'] = url;
+    //       result['status'] = (result1.status === 200 && result2.status === 200) ? 200 : 404;
+    //       result['last-modified'] = result1['last-modified'];
 
-          if (result1['last-modified'] === result2['last-modified']) {
-            result['cache-status'] = '✅';
-          } else {
-            result['cache-status'] = '❌';
-          }
-        }
-      } else {
-        result['url'] = url;
-        result['status'] = result1.status;
-        result['last-modified'] = result1['last-modified'];
-      }
+    //       if (result1['last-modified'] === result2['last-modified']) {
+    //         result['cache-status'] = '✅';
+    //       } else {
+    //         result['cache-status'] = '❌';
+    //       }
+    //     }
+    //   } else {
+    //     result['url'] = url;
+    //     result['status'] = result1.status;
+    //     result['last-modified'] = result1['last-modified'];
+    //   }
 
-      statusResults2.push(result);
-    }
-    statusResults.push(...statusResults2);
+    //   statusResults2.push(result);
+    // }
+    // statusResults.push(...statusResults2);
 
     return statusResults.sort((a, b) => b.status - a.status);
   }
