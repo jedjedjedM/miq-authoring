@@ -80,7 +80,7 @@ const Debugger = () => {
 
       <h2>404 Checker</h2>
 
-      <UrlsChecker resultsPath={selectedWebsite}></UrlsChecker>
+      {/* <UrlsChecker resultsPath={selectedWebsite}></UrlsChecker> */}
 
       <h2>Quiz Validation</h2>
       {validationResults.map((validation, index) => (
@@ -92,7 +92,7 @@ const Debugger = () => {
         </div>
       ))}
       
-      <hr />
+      {/* <hr />
       <h2>Results Validation</h2>
       <div className="spectrum-InLineAlert">
         <div className="spectrum-InLineAlert-header">
@@ -122,7 +122,7 @@ const Debugger = () => {
           </svg>
         </div>
         <div className="spectrum-InLineAlert-content">Missing 34 questions/options scenarios. Click here to generate list.</div>
-      </div>
+      </div> */}
 
 
 
