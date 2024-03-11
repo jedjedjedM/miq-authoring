@@ -10,7 +10,7 @@ import zStore from '../../../store/Store.jsx';
 
 const QuestionNode = memo(({ id, data, isConnectable }) => {
 
-    const updateNodeData = zStore((state) => state.updateNodeData);
+    const updateNodeData = zStore((state) =>  state.updateNodeData);
 
     const onInputChange = (fieldName) => (event) => {
         console.log('onInputChange happening');
