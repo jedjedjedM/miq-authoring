@@ -129,12 +129,9 @@ const QuizEditor = () => {
 
   const importData = async (importBaseUrl) => {
     try {
-      // const questionsData = await fetchFile(importBaseUrl, 'questions.json');
-      // const stringsData = await fetchFile(importBaseUrl, 'strings.json');
-      // const resultsData = await fetchFile(importBaseUrl, 'results.json');
-      const questionsData = await fetchFile('http://localhost:5173/src/assets/json/', 'questions.json');
-      const stringsData = await fetchFile('http://localhost:5173/src/assets/json/', 'strings.json');
-      const resultsData = await fetchFile('http://localhost:5173/src/assets/json/', 'results.json');
+      const questionsData = await fetchFile(importBaseUrl, 'questions.json');
+      const stringsData = await fetchFile(importBaseUrl, 'strings.json');
+      const resultsData = await fetchFile(importBaseUrl, 'results.json');
 
       myUseStore.getState().setData(stringsData, questionsData, resultsData);
       const validationResults = performValidations(questionsData, stringsData);
