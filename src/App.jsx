@@ -296,8 +296,6 @@ const QuizEditor = () => {
 
   const exportData = () => {
     const { nodes, edges } = myUseStore.getState();
-    console.log(nodes);
-    console.log(edges);
     
     function createDynamicResultsJsonStructure(questionKeys, resultFragmentsKeys, resultDestinationKeys) {
       const createDataEntry = (keys) => keys.reduce((acc, key) => ({ ...acc, [key]: "" }), {});
