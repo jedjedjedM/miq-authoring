@@ -132,6 +132,7 @@ const QuizEditor = () => {
       const questionsData = await fetchFile(importBaseUrl, 'questions.json');
       const stringsData = await fetchFile(importBaseUrl, 'strings.json');
       const resultsData = await fetchFile(importBaseUrl, 'results.json');
+
       myUseStore.getState().setData(stringsData, questionsData, resultsData);
       const validationResults = performValidations(questionsData, stringsData);
       myUseStore.getState().setValidationResults(validationResults);
@@ -292,17 +293,49 @@ const QuizEditor = () => {
     for (let i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
   };
-  
+
   const exportData = () => {
     const { nodes, edges } = myUseStore.getState();
+    
+    function createDynamicResultsJsonStructure(questionKeys, resultFragmentsKeys, resultDestinationKeys) {
+      const createDataEntry = (keys) => keys.reduce((acc, key) => ({ ...acc, [key]: "" }), {});
   
+      return {
+        "helix-result": {
+          "data": Array(nodes.filter(node => node.type === 'question').length).fill().map(() => ({
+        ...createDataEntry(questionKeys),
+        "result-primary": "",
+        "result-secondary": ""
+          }))
+        },
+        "helix-result-fragments": {
+          "data": Array(resultFragmentsKeys.length).fill().map(() => createDataEntry(resultFragmentsKeys))
+        },
+        "helix-result-destination": {
+          "data": Array(resultDestinationKeys.length).fill().map(() => createDataEntry(resultDestinationKeys))
+        },
+        ":names": [
+          "helix-result",
+          "helix-result-fragments",
+          "helix-result-destination"
+        ],
+        ":type": "multi-sheet"
+      };
+    }
+  
+    const questionKeys = nodes.filter(node => node.type === 'question').map(node => node.id);
+    const resultFragmentsKeys = ["product", "marquee", "card-list", "commerce-card", "marquee-product-single", "marquee-product-cc", "master-plan", "learn", "value-prop", "check-bullet", "media", "templates"];
+    const resultDestinationKeys = ["result", "umbrella-result", "url", "basic-fragments", "nested-fragments-primary", "nested-fragments-secondary"];
+    const resultsJsonStructure = createDynamicResultsJsonStructure(questionKeys, resultFragmentsKeys, resultDestinationKeys);
+
     const questionsData = generateQuestionsData(nodes, edges);
     const stringsData = generateStringsData(nodes, edges);
   
     convertJsonToXlsx(questionsData, 'questions.xlsx');
     convertJsonToXlsx(stringsData, 'strings.xlsx');
+    convertJsonToXlsx(resultsJsonStructure, 'results.xlsx');
   };
-  
+    
   const generateQuestionsData = (nodes, edges) => {
     const questionsSummary = nodes.filter(node => node.type === 'question').map(qNode => ({
       questions: qNode.id,
