@@ -6,7 +6,7 @@ export function generateSingleCombinations(questionMap, currentQuestionId, curre
 
   currentQuestion.forEach(option => {
     // Clone the userSelections object to avoid mutations affecting other branches
-    let newUserSelections = { ...userSelections, [step]: option.options };
+    let newUserSelections = { ...userSelections, [currentQuestionId]: option.options };
     let newPath = [...currentPath, option.options];
     
     const nextQuestions = option.next.split(',');
@@ -18,7 +18,7 @@ export function generateSingleCombinations(questionMap, currentQuestionId, curre
       } else if (nextQuestionId === 'RESULT') {
         // Handle result differently based on the newPath length
         if (newPath.length > 2) {
-          combinations.push(Object.values(newUserSelections).join(', '));
+          combinations.push(newUserSelections);
         } else if (newPath.length == 2) {
           // Possibly increment step or perform other actions specific to reaching a result
           return;
@@ -44,7 +44,7 @@ export function generateDoubleCombinations(questionMap, currentQuestionId, curre
       const combinedOption = `${option1}&${option2}`;
 
       let newPath = [...currentPath, combinedOption];
-      userSelections[step] = combinedOption;
+      userSelections[currentQuestionId] = combinedOption;
 
       // Find common and unique next questions for both options
       const { commonNextQuestions, uniqueToA, uniqueToB } = findNextQuestions(currentQuestion, startIndex, nextIndex);
@@ -66,14 +66,14 @@ export function generateDoubleCombinations(questionMap, currentQuestionId, curre
     // Process other questions similarly to before
     currentQuestion.forEach(option => {
       let newPath = [...currentPath, option.options];
-      userSelections[step] = option.options;
+      userSelections[currentQuestionId] = option.options;
 
       const nextQuestions = option.next.split(',');
       nextQuestions.forEach(nextQuestionId => {
         if (!nextQuestionId.startsWith('NOT') && !nextQuestionId.startsWith('RESET')) {
           if (nextQuestionId === 'RESULT') {
             if (newPath.length > 2) {
-              combinations.push(Object.values(userSelections).join(', '));
+              combinations.push(userSelections);
             }
             if (newPath.length === 2) {
               return;
@@ -116,7 +116,8 @@ function handleUniqueNextQuestions(questionMap, uniqueToA, uniqueToB, currentPat
       uniqueToB.forEach(nextQuestionId2 => {
         const currentQuestion2 = questionMap[nextQuestionId2];
         for (const option2 of currentQuestion2.data) {
-          userSelections[step] = option1.options + '&' + option2.options;
+          userSelections[nextQuestionId1] = option1.options;
+          userSelections[nextQuestionId2] =option2.options;
           const newPath = [...currentPath, option1.options + '&' + option2.options];
           const nextQuestions = option2.next.split(',');
           nextQuestions.forEach(nextQuestionId => {
@@ -145,7 +146,7 @@ export function generateTripleCombinations(questionMap, currentQuestionId, curre
         const combinedOption = `${option1}&${option2}&${option3}`;
 
         let newPath = [...currentPath, combinedOption];
-        userSelections[step] = combinedOption;
+        userSelections[currentQuestionId] = combinedOption;
 
         // Find common and unique next questions for all three options
         const { commonNextQuestions, uniqueToA, uniqueToB, uniqueToC } = findNextQuestionsTriple(currentQuestion, startIndex, nextIndex, thirdIndex);
@@ -168,14 +169,14 @@ export function generateTripleCombinations(questionMap, currentQuestionId, curre
     // Process other questions similarly to before
     currentQuestion.forEach(option => {
       let newPath = [...currentPath, option.options];
-      userSelections[step] = option.options;
+      userSelections[currentQuestionId] = option.options;
 
       const nextQuestions = option.next.split(',');
       nextQuestions.forEach(nextQuestionId => {
         if (!nextQuestionId.startsWith('NOT') && !nextQuestionId.startsWith('RESET')) {
           if (nextQuestionId === 'RESULT') {
             if (newPath.length > 2) {
-              combinations.push(Object.values(userSelections).join(', '));
+              combinations.push(userSelections);
             }
             if (newPath.length === 2) {
               return;
@@ -220,7 +221,9 @@ function handleUniqueNextQuestionsTriple(questionMap, uniqueToA, uniqueToB, uniq
           uniqueToC.forEach(nextQuestionId3 => {
             const currentQuestion3 = questionMap[nextQuestionId3];
             for (const option3 of currentQuestion3.data) {
-              userSelections[step] = option1.options + '&' + option2.options + '&' + option3.options;
+              userSelections[nextQuestionId1] = option1.options;
+              userSelections[nextQuestionId2] = option2.options;
+              userSelections[nextQuestionId3] = option3.options;
               const newPath = [...currentPath, option1.options + '&' + option2.options + '&' + option3.options];
               const nextQuestions = option3.next.split(',');
               nextQuestions.forEach(nextQuestionId => {
