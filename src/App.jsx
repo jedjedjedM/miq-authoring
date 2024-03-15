@@ -420,17 +420,17 @@ const QuizEditor = () => {
           <div className="wrapper flex" style={{ height: '100vh' }}>
             <div className="main-body">
               <sp-top-nav class="top-nav">
-                <Link to="/">
+                <Link to="./">
                   <sp-top-nav-item>
                     Visual Authoring
                   </sp-top-nav-item>
                 </Link>
-                <Link to="/quiz-results">
+                <Link to="./quiz-results">
                   <sp-top-nav-item>
                     Quiz Results
                   </sp-top-nav-item>
                 </Link>
-                <Link to="/debugger">
+                <Link to="./debugger">
                   <sp-top-nav-item>
                     Debugger
                   </sp-top-nav-item>
