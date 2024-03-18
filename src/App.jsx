@@ -438,9 +438,9 @@ const QuizEditor = () => {
               </sp-top-nav>
 
               <Routes>
-                <Route path="quiz-results" element={<QuizResults resultsData={resultsData} />} />
-                <Route path="debugger" element={<Debugger />} />
-                <Route path=".*" element={
+                <Route path="/quiz-results" element={<QuizResults resultsData={resultsData} />} />
+                <Route path="/debugger" element={<Debugger />} />
+                <Route path="/" element={
                   <ReactFlow
                     nodes={nodes}
                     edges={edges}
@@ -486,5 +486,3 @@ export default () => (
     <QuizEditor />
   </ReactFlowProvider>
 );
-
-
